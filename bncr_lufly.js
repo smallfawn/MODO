@@ -3,7 +3,7 @@
  * @name bncr_lufly
  * @team smallfawn
  * @version 1.0.0
- * @description 鹿飞账密V2新版登录
+ * @description lufly
  * @rule ^(京东登录)
  * @admin false
  * @public false
