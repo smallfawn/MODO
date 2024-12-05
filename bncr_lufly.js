@@ -3,7 +3,7 @@
  * @name bncr_lufly
  * @team smallfawn
  * @version 1.0.0
- * @description 鹿飞账密V2新版登录
+ * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
  * @public false
@@ -53,8 +53,11 @@ module.exports = async s => {
 
 
                 if (res.code == 0) {
-                    await s.reply('登录成功')
+                    await s.reply(`======JD登录通知======\n
+                                    登录用户: ${res.data['pin_token']}\n
+                                    登录时间: ${getNow()}`)
                     return
+
                 }
                 if (res.code == 1) {
                     await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，输入ok后系统自动重新登录' + res.data)
