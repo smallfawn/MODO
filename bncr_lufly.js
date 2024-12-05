@@ -11,6 +11,22 @@
  * @disable false
 
  */
+function getNow() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = ('0' + (now.getMonth() + 1)).slice(-2);
+    const day = ('0' + now.getDate()).slice(-2);
+    const hours = ('0' + now.getHours()).slice(-2);
+    const minutes = ('0' + now.getMinutes()).slice(-2);
+    const seconds = ('0' + now.getSeconds()).slice(-2);
+
+    const formattedTime = year + month + day + hours + minutes + seconds;
+    return formattedTime;
+}
+
+
+
 const axios = require('axios')
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -47,7 +63,9 @@ module.exports = async s => {
                         if (input == 'ok') {
                             let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
                             if (res.code == 0) {
-                                await s.reply('登录成功')
+                                await s.reply(`======JD登录通知======\n
+                                    登录用户: ${res.data['pin_token']}\n
+                                    登录时间: ${getNow()}`)
                                 return
                             }
                             else {
