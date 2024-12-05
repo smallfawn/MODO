@@ -58,6 +58,8 @@ async function wxpusher(content, uid) {
     let encoded_content = encodeURIComponent(content);
     const url = "https://wxpusher.zjiecode.com/api/send/message/?appToken=" + wxpusherToken + "&content=" + encoded_content + "&uid=" + uid + "&url=http%3a%2f%2fbaidu.com"
     const { data: res } = axios.get(url)
+    console.log(res);
+
 }
 async function main() {
     let luflyCookies = await getCookiesByLufly()
