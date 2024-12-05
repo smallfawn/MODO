@@ -10,6 +10,7 @@ const wxpusherToken = ''   //懂得都懂
 const axios = require('axios');
 async function getTokenByLufly() {
     const { data: res } = await axios.post(luflyApi + '/api/admin/login', { username, password });
+    console.log(res)
     if (res.code == 0) {
         return res.data.token;
     } else {
@@ -58,6 +59,8 @@ async function main() {
     let luflyCookies = await getCookiesByLufly()
     for (let i of luflyCookies) {
         let qinglongCookie = await getEnvByPtPin(i.ptpin)
+        console.log(`默认延迟每10s`)
+        await wait(1000)
         if (qinglongCookie) {
             if (qinglongCookie.status == 1) {
                 console.log('账号' + i.ptpin + '已失效')
