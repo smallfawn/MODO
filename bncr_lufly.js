@@ -21,7 +21,7 @@ function getNow() {
     const minutes = ('0' + now.getMinutes()).slice(-2);
     const seconds = ('0' + now.getSeconds()).slice(-2);
 
-    const formattedTime = year + month + day + hours + minutes + seconds;
+    const formattedTime = year + '-' + month + '-' + day + '  ' + hours + ":" + minutes + ":" + seconds;
     return formattedTime;
 }
 
@@ -53,9 +53,7 @@ module.exports = async s => {
 
 
                 if (res.code == 0) {
-                    await s.reply(`======JD登录通知======\n
-                                    登录用户: ${res.data['pin_token']}\n
-                                    登录时间: ${getNow()}`)
+                    await s.reply(`======JD登录通知======\n登录用户: ${res.data['pin']}\n登录时间: ${getNow()}`)
                     return
 
                 }
@@ -66,9 +64,7 @@ module.exports = async s => {
                         if (input == 'ok') {
                             let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
                             if (res.code == 0) {
-                                await s.reply(`======JD登录通知======\n
-                                    登录用户: ${res.data['pin_token']}\n
-                                    登录时间: ${getNow()}`)
+                                await s.reply(`======JD登录通知======\n登录用户: ${res.data['pin']}\n登录时间: ${getNow()}`)
                                 return
                             }
                             else {
