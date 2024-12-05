@@ -31,13 +31,17 @@ async function getCookiesByLufly() {
     }
 }
 
-async function LOGINAPI(username, password) {
+async function LOGINAPI(username, password, uid = '') {
     let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
     if (res.code == 0) {
         console.log('登录成功')
         return true;
     }
     if (res.code == 1) {
+        if (uid) {
+            await wxpusher('账号刷新失败,请重新在网站登录', uid)
+        }
+
         console.log('登录失败' + res.msg)
         return false
     }
@@ -65,7 +69,7 @@ async function main() {
             if (qinglongCookie.status == 1) {
                 console.log('账号' + i.ptpin + '已失效')
                 //更新拿到COOKIE后update
-                let loginRes = await LOGINAPI(i.username, i.password)
+                let loginRes = await LOGINAPI(i.username, i.password, i['notify']['params'])
                 let isFlag = false
 
 
