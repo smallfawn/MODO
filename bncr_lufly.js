@@ -3,7 +3,7 @@
  * @name bncr_lufly
  * @team smallfawn
  * @version 1.0.0
- * @description lufly
+ * @description 鹿飞账密V2新版登录
  * @rule ^(京东登录)
  * @admin false
  * @public false
@@ -41,7 +41,22 @@ module.exports = async s => {
                     return
                 }
                 if (res.code == 1) {
-                    await s.reply('登录风控，请先去该链接验证' + res.data)
+                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，输入ok后系统自动重新登录' + res.data)
+                    let risk_input = await s.waitInput(async (s) => {
+                        input = s.getMsg();
+                        if (input == 'ok') {
+                            let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
+                            if (res.code == 0) {
+                                await s.reply('登录成功')
+                                return
+                            }
+                            else {
+                                await s.reply('登录失败 请明天再次过验证')
+                                return
+                            }
+                        }
+                    }, 30);
+                    if (risk_input === null) return s.reply('超时退出/已退出');
                 }
                 if (res.code == 2) {
                     await s.reply('登录失败' + res.msg)
