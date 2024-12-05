@@ -47,13 +47,14 @@ module.exports = async s => {
                 if (input === 'q') return await s.reply('已退出')
                 let password = s.getMsg();
                 await s.reply('正在登陆中ing');
+                let startTime = Date.now()
                 let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
-
+                let endTime = Date.now()
 
 
 
                 if (res.code == 0) {
-                    await s.reply(`======JD登录通知======\n登录用户: ${res.data['pin']}\n登录时间: ${getNow()}`)
+                    await s.reply(`======JD登录通知======\n登录用户: ${res.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
                     return
 
                 }
@@ -62,9 +63,12 @@ module.exports = async s => {
                     let risk_input = await s.waitInput(async (s) => {
                         input = s.getMsg();
                         if (input == 'ok') {
+                            let startTime = Date.now()
                             let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
+                            let endTime = Date.now()
                             if (res.code == 0) {
-                                await s.reply(`======JD登录通知======\n登录用户: ${res.data['pin']}\n登录时间: ${getNow()}`)
+
+                                await s.reply(`======JD登录通知======\n登录用户: ${res.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
                                 return
                             }
                             else {
