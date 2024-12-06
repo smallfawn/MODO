@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.1
+ * @version 1.0.0
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -130,7 +130,7 @@ module.exports = async s => {
                                 return
                             }
                         }
-                    }, 30);
+                    }, 60);
                     if (risk_input === null) return s.reply('超时退出/已退出');
                 }
                 if (loginRes.code == 2) {
@@ -146,12 +146,12 @@ module.exports = async s => {
 
 
 
-            }, 30);
+            }, 90);
             if (password_input === null) return s.reply('超时退出/已退出');
 
 
 
-        }, 30);
+        }, 120);
         if (username_input === null) return await s.reply('已退出')
     }
 };
