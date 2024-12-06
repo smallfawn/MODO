@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.2
+ * @version 1.0.0
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -86,7 +86,7 @@ module.exports = async s => {
 
                 }
                 if (loginRes.code == 1) {
-                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后120后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
+                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后90后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
 
                     await wait(90 * 1000)
                     if (input == 'ok') {
@@ -145,12 +145,12 @@ module.exports = async s => {
 
 
 
-            }, 90);
+            }, 120);
             if (password_input === null) return s.reply('超时退出/已退出');
 
 
 
-        }, 120);
+        }, 180);
         if (username_input === null) return await s.reply('已退出')
     }
 };
