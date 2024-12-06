@@ -86,9 +86,9 @@ module.exports = async s => {
 
                 }
                 if (loginRes.code == 1) {
-                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后90后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
+                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后60s后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
 
-                    await wait(90 * 1000)
+                    await wait(60 * 1000)
                     if (input == 'ok') {
                         let startTime = Date.now()
                         let { data: loginRes2 } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
