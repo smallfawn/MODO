@@ -86,7 +86,7 @@ module.exports = async s => {
 
                 }
                 if (loginRes.code == 1) {
-                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，输入ok后系统自动重新登录' + loginRes.data)
+                    await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后回复ok系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
                     let risk_input = await s.waitInput(async (s) => {
                         input = s.getMsg();
                         if (input == 'ok') {
