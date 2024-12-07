@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.0
+ * @version 1.0.2
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -89,47 +89,47 @@ module.exports = async s => {
                     await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后60s后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
 
                     await wait(60 * 1000)
-                    if (input == 'ok') {
-                        let startTime = Date.now()
-                        let { data: loginRes2 } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
-                        let endTime = Date.now()
-                        if (loginRes2.code == 0) {
 
-                            await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
-                            let TOKEN = loginRes.data['token']
-                            let { data: infoRes } = await axios.post(luflyApi + '/api/user/info', { params: "" }, {
-                                headers: {
-                                    'token': `${TOKEN}`
-                                }
-                            });
-                            if (infoRes.code == 0) {
-                                if (infoRes.data['notify']['type'] == 'wxpusher') {
-                                    if (infoRes.data['notify']['params'] == '') {
-                                        let { data: pusherRes } = await axios.post(luflyApi + '/api/user/wxpusher', { params: "" }, {
-                                            headers: {
-                                                'token': `${TOKEN}`
-                                            }
-                                        });
-                                        if (pusherRes.code == 0) {
-                                            await s.reply({
-                                                type: 'image', // video
-                                                msg: '请用微信扫码绑定通知方式',
-                                                path: pusherRes.data,
-                                            });
-                                            await s.reply('请微信扫码绑定通知方式 后续刷新失败则通知');
-                                            return
-                                        }
-                                    }
+                    let startTime = Date.now()
+                    let { data: loginRes2 } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
+                    let endTime = Date.now()
+                    if (loginRes2.code == 0) {
 
-                                }
+                        await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
+                        let TOKEN = loginRes.data['token']
+                        let { data: infoRes } = await axios.post(luflyApi + '/api/user/info', { params: "" }, {
+                            headers: {
+                                'token': `${TOKEN}`
                             }
+                        });
+                        if (infoRes.code == 0) {
+                            if (infoRes.data['notify']['type'] == 'wxpusher') {
+                                if (infoRes.data['notify']['params'] == '') {
+                                    let { data: pusherRes } = await axios.post(luflyApi + '/api/user/wxpusher', { params: "" }, {
+                                        headers: {
+                                            'token': `${TOKEN}`
+                                        }
+                                    });
+                                    if (pusherRes.code == 0) {
+                                        await s.reply({
+                                            type: 'image', // video
+                                            msg: '请用微信扫码绑定通知方式',
+                                            path: pusherRes.data,
+                                        });
+                                        await s.reply('请微信扫码绑定通知方式 后续刷新失败则通知');
+                                        return
+                                    }
+                                }
 
+                            }
                         }
-                        else {
-                            await s.reply('登录失败 请明天再次过验证')
-                            return
-                        }
+
                     }
+                    else {
+                        await s.reply('登录失败 请明天再次过验证')
+                        return
+                    }
+
 
                 }
                 if (loginRes.code == 2) {
