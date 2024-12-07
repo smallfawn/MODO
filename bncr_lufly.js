@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.3
+ * @version 1.0.4
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -34,9 +34,12 @@ function wait(ms) {
 let luflyApi = 'http://192.168.31.197:6789'
 /* HideStart */
 module.exports = async s => {
+
     if (s.getMsg() == '京东登录') {
+        const from = s.getFrom()
+        const userId = s.getUserId()
         let input;
-        await s.reply('请输入登录方式\n1.账号密码登录\n2.短信登录\n输入数字即可 输入q退出');
+        await s.reply(userId + '请输入登录方式\n1.账号密码登录\n2.短信登录\n输入数字即可 输入q退出');
         let type_input = await s.waitInput(async (s) => {
             input = s.getMsg();
             if (input === 'q') return await s.reply('已退出')
@@ -69,6 +72,16 @@ module.exports = async s => {
                                 }
                             });
                             if (infoRes.code == 0) {
+                                let { data: bindRes } = await axios.post(luflyApi + '/api/user/bind/set', { bindType: from, bindParams: userId }, {
+                                    headers: {
+                                        'token': `${TOKEN}`
+                                    }
+                                });
+                                if (bindRes.code == 0) {
+                                    await s.reply(`绑定成功平台成功`)
+                                } else {
+                                    await s.reply(res.msg)
+                                }
                                 if (infoRes.data['notify']['type'] == 'wxpusher') {
                                     if (infoRes.data['notify']['params'] == '') {
                                         let { data: pusherRes } = await axios.post(luflyApi + '/api/user/wxpusher', { params: "" }, {
@@ -110,6 +123,28 @@ module.exports = async s => {
                                     }
                                 });
                                 if (infoRes.code == 0) {
+                                    let { data: bindRes } = await axios.post(luflyApi + '/api/user/bind/set', { bindType: from, bindParams: userId }, {
+                                        headers: {
+                                            'token': `${TOKEN}`
+                                        }
+                                    });
+                                    if (bindRes.code == 0) {
+                                        await s.reply(`绑定成功平台成功`)
+                                    } else {
+                                        await s.reply(res.msg)
+                                    }
+
+
+
+
+
+
+
+
+
+
+
+
                                     if (infoRes.data['notify']['type'] == 'wxpusher') {
                                         if (infoRes.data['notify']['params'] == '') {
                                             let { data: pusherRes } = await axios.post(luflyApi + '/api/user/wxpusher', { params: "" }, {
