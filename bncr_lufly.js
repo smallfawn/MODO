@@ -106,7 +106,7 @@ module.exports = async s => {
 
                         }
                         if (loginRes.code == 1) {
-                            await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后60s后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试' + loginRes.data)
+                            await s.reply('登录风控，请先去该链接验证,验证成功后白屏即可返回，验证完成后60s后 系统自动重新登录\n\n如果两次风控则代表该账号处于风控状态，明日再试\n或使用短信登录' + loginRes.data)
 
                             await wait(60 * 1000)
 
@@ -114,9 +114,10 @@ module.exports = async s => {
                             let { data: loginRes2 } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
                             let endTime = Date.now()
                             if (loginRes2.code == 0) {
+                                //console.log(loginRes2);
 
-                                await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
-                                let TOKEN = loginRes.data['token']
+                                await s.reply(`======JD登录通知======\n登录用户: ${loginRes2.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
+                                let TOKEN = loginRes2.data['token']
                                 let { data: infoRes } = await axios.post(luflyApi + '/api/user/info', { params: "" }, {
                                     headers: {
                                         'token': `${TOKEN}`
@@ -168,7 +169,7 @@ module.exports = async s => {
 
                             }
                             else {
-                                await s.reply('登录失败 请明天再次过验证')
+                                await s.reply('登录失败 请明天再次过验证登录\n或使用短信登录')
                                 return
                             }
 
