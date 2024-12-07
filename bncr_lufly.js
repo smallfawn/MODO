@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.4
+ * @version 1.0.5
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -227,6 +227,17 @@ module.exports = async s => {
                             let { data: loginRes } = await axios.post(luflyApi + '/api/user/login/code', { username, code });
                             let endTime = Date.now()
                             if (loginRes.code == 0) {
+                                let TOKEN = loginRes.data.token;
+                                let { data: bindRes } = await axios.post(luflyApi + '/api/user/bind/set', { bindType: from, bindParams: userId }, {
+                                    headers: {
+                                        'token': `${TOKEN}`
+                                    }
+                                });
+                                if (bindRes.code == 0) {
+                                    await s.reply(`绑定成功平台成功`)
+                                } else {
+                                    await s.reply(res.msg)
+                                }
                                 await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
                             } else {
                                 await s.reply('登录失败' + loginRes.msg)
