@@ -1,3 +1,5 @@
+// @version 1.0.0
+
 const luflyApi = ''  //你的内网或公网lufly地址
 const username = '' //lufly管理员用户名
 const password = '' //lufly管理员密码
@@ -34,7 +36,7 @@ async function getCookiesByLufly() {
 async function LOGINAPI(username, password, uid = '') {
     let { data: res } = await axios.post(luflyApi + '/api/user/login/do', { username, password });
     if (res.code == 0) {
-        console.log('登录成功')
+        console.log('✅✅登录成功✅✅')
         return true;
     }
     if (res.code == 1) {
@@ -42,11 +44,11 @@ async function LOGINAPI(username, password, uid = '') {
             await wxpusher('账号刷新失败,请重新在网站登录', uid)
         }
 
-        console.log('登录失败' + res.msg)
+        console.log('登录失败===>' + res.msg)
         return false
     }
     if (res.code == 2) {
-        console.log('登录失败' + res.msg)
+        console.log('登录失败===>' + res.msg)
         return false
     }
 }
@@ -66,7 +68,7 @@ async function main() {
     for (let i of luflyCookies) {
         let qinglongCookie = await getEnvByPtPin(i.ptpin)
         console.log(`默认延迟每10s`)
-        await wait(1000)
+        await wait(10000)
         if (qinglongCookie) {
             if (qinglongCookie.status == 1) {
                 console.log('账号' + i.ptpin + '已失效')
