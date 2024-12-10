@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.6
+ * @version 1.0.7
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -119,7 +119,7 @@ module.exports = async s => {
                                     }
                                 }
                                 if (!isHave) {
-                                    user.push({ username: username, pin: loginRes.data['pin'] })
+                                    user.push({ username: username, pin: loginRes2.data['pin'] })
                                 }
                                 await lufly_cache.set(from + '_' + userId, JSON.stringify(user)); // 成功 true 失败false
                                 await s.reply(`======JD登录通知======\n登录用户: ${loginRes2.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s\n输入:京东查询 查询收益`)
