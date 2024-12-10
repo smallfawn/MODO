@@ -2,7 +2,7 @@
  * @author smallfawn
  * @name bncr_lufly
  * @team smallfawn
- * @version 1.0.5
+ * @version 1.0.6
  * @description luflyV3
  * @rule ^(京东登录)
  * @admin false
@@ -11,29 +11,15 @@
  * @disable false
 
  */
-function getNow() {
-    const now = new Date();
-
-    const year = now.getFullYear();
-    const month = ('0' + (now.getMonth() + 1)).slice(-2);
-    const day = ('0' + now.getDate()).slice(-2);
-    const hours = ('0' + now.getHours()).slice(-2);
-    const minutes = ('0' + now.getMinutes()).slice(-2);
-    const seconds = ('0' + now.getSeconds()).slice(-2);
-
-    const formattedTime = year + '-' + month + '-' + day + '  ' + hours + ":" + minutes + ":" + seconds;
-    return formattedTime;
-}
-
 
 
 const axios = require('axios')
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+
 let luflyApi = 'http://192.168.31.197:6789'
+
 /* HideStart */
 module.exports = async s => {
+    const lufly_cache = new BncrDB('lufly_cache');
 
     if (s.getMsg() == '京东登录') {
         const from = s.getFrom()
@@ -64,7 +50,24 @@ module.exports = async s => {
 
 
                         if (loginRes.code == 0) {
-                            await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
+                            let user = await lufly_cache.get(from + '_' + userId, "[]"); // 空值
+
+                            user = JSON.parse(user)
+                            let isHave = false
+                            for (let i = 0; i < user.length; i++) {
+                                if (user[i]['username'] == username) {
+                                    user[i]['pin'] = loginRes.data['pin'];
+                                    isHave = true
+                                }
+                            }
+                            if (!isHave) {
+                                user.push({ username: username, pin: loginRes.data['pin'] })
+                            }
+
+
+
+                            await lufly_cache.set(from + '_' + userId, JSON.stringify(user)); // 成功 true 失败false
+                            await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s\n输入:京东查询 查询收益`)
                             let TOKEN = loginRes.data['token']
                             let { data: infoRes } = await axios.post(luflyApi + '/api/user/info', { params: "" }, {
                                 headers: {
@@ -72,16 +75,6 @@ module.exports = async s => {
                                 }
                             });
                             if (infoRes.code == 0) {
-                                let { data: bindRes } = await axios.post(luflyApi + '/api/user/bind/set', { bindType: from, bindParams: userId }, {
-                                    headers: {
-                                        'token': `${TOKEN}`
-                                    }
-                                });
-                                if (bindRes.code == 0) {
-                                    await s.reply(`绑定成功平台成功`)
-                                } else {
-                                    await s.reply(res.msg)
-                                }
                                 if (infoRes.data['notify']['type'] == 'wxpusher') {
                                     if (infoRes.data['notify']['params'] == '') {
                                         let { data: pusherRes } = await axios.post(luflyApi + '/api/user/wxpusher', { params: "" }, {
@@ -95,7 +88,7 @@ module.exports = async s => {
                                                 msg: '请用微信扫码绑定通知方式',
                                                 path: pusherRes.data,
                                             });
-                                            await s.reply('请微信扫码绑定通知方式 后续刷新失败则通知');
+                                            await s.reply('请微信扫码绑定通知方式 后续刷新失败则通知 扫码成功即可 无需等待回复');
                                             return
                                         }
                                     }
@@ -115,8 +108,21 @@ module.exports = async s => {
                             let endTime = Date.now()
                             if (loginRes2.code == 0) {
                                 //console.log(loginRes2);
+                                let user = await lufly_cache.get(from + '_' + userId, "[]"); // 空值
 
-                                await s.reply(`======JD登录通知======\n登录用户: ${loginRes2.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
+                                user = JSON.parse(user)
+                                let isHave = false
+                                for (let i = 0; i < user.length; i++) {
+                                    if (user[i]['username'] == username) {
+                                        user[i]['pin'] = loginRes.data['pin'];
+                                        isHave = true
+                                    }
+                                }
+                                if (!isHave) {
+                                    user.push({ username: username, pin: loginRes.data['pin'] })
+                                }
+                                await lufly_cache.set(from + '_' + userId, JSON.stringify(user)); // 成功 true 失败false
+                                await s.reply(`======JD登录通知======\n登录用户: ${loginRes2.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s\n输入:京东查询 查询收益`)
                                 let TOKEN = loginRes2.data['token']
                                 let { data: infoRes } = await axios.post(luflyApi + '/api/user/info', { params: "" }, {
                                     headers: {
@@ -124,28 +130,6 @@ module.exports = async s => {
                                     }
                                 });
                                 if (infoRes.code == 0) {
-                                    let { data: bindRes } = await axios.post(luflyApi + '/api/user/bind/set', { bindType: from, bindParams: userId }, {
-                                        headers: {
-                                            'token': `${TOKEN}`
-                                        }
-                                    });
-                                    if (bindRes.code == 0) {
-                                        await s.reply(`绑定成功平台成功`)
-                                    } else {
-                                        await s.reply(res.msg)
-                                    }
-
-
-
-
-
-
-
-
-
-
-
-
                                     if (infoRes.data['notify']['type'] == 'wxpusher') {
                                         if (infoRes.data['notify']['params'] == '') {
                                             let { data: pusherRes } = await axios.post(luflyApi + '/api/user/wxpusher', { params: "" }, {
@@ -159,7 +143,7 @@ module.exports = async s => {
                                                     msg: '请用微信扫码绑定通知方式',
                                                     path: pusherRes.data,
                                                 });
-                                                await s.reply('请微信扫码绑定通知方式 后续刷新失败则通知');
+                                                await s.reply('请微信扫码绑定通知方式 后续刷新失败则通知 扫码成功即可 无需等待回复');
                                                 return
                                             }
                                         }
@@ -209,12 +193,14 @@ module.exports = async s => {
                         await s.reply('格式不对手机号,重新输入京东登录')
                         return
                     }
+                    await s.reply('正在发送短信...')
                     let startTime = Date.now()
                     let { data: sendRes } = await axios.post(luflyApi + '/api/user/login/send', { username });
                     let endTime = Date.now()
 
                     if (sendRes.code == 0) {
-                        await s.reply(`======发送短信成功======\n用户: ${username}\n发送时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
+
+                        await s.reply(`======发送短信成功======\n用户: ${username}\n发送时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s\n输入:京东查询 查询收益`)
                         await s.reply('请输入短信验证码 输入q随时退出')
                         let code_input = await s.waitInput(async (s) => {
                             input = s.getMsg();
@@ -229,17 +215,21 @@ module.exports = async s => {
                             let endTime = Date.now()
                             if (loginRes.code == 0) {
                                 let TOKEN = loginRes.data.token;
-                                let { data: bindRes } = await axios.post(luflyApi + '/api/user/bind/set', { bindType: from, bindParams: userId }, {
-                                    headers: {
-                                        'token': `${TOKEN}`
+                                let user = await lufly_cache.get(from + '_' + userId, "[]"); // 空值
+
+                                user = JSON.parse(user)
+                                let isHave = false
+                                for (let i = 0; i < user.length; i++) {
+                                    if (user[i]['username'] == username) {
+                                        user[i]['pin'] = loginRes.data['pin'];
+                                        isHave = true
                                     }
-                                });
-                                if (bindRes.code == 0) {
-                                    await s.reply(`绑定成功平台成功`)
-                                } else {
-                                    await s.reply(res.msg)
                                 }
-                                await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s`)
+                                if (!isHave) {
+                                    user.push({ username: username, pin: loginRes.data['pin'] })
+                                }
+                                await lufly_cache.set(from + '_' + userId, JSON.stringify(user)); // 成功 true 失败false
+                                await s.reply(`======JD登录通知======\n登录用户: ${loginRes.data['pin']}\n登录时间: ${getNow()}\n耗时: ${(endTime - startTime) / 1000}s\n输入:京东查询 查询收益`)
                             } else {
                                 await s.reply('登录失败' + loginRes.msg)
                             }
@@ -288,6 +278,23 @@ function isSixDigit(numOrStr) {
     const str = numOrStr.toString(); // 先统一转换为字符串类型
     const reg = /^\d{6}$/;
     return reg.test(str);
+}
+function getNow() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = ('0' + (now.getMonth() + 1)).slice(-2);
+    const day = ('0' + now.getDate()).slice(-2);
+    const hours = ('0' + now.getHours()).slice(-2);
+    const minutes = ('0' + now.getMinutes()).slice(-2);
+    const seconds = ('0' + now.getSeconds()).slice(-2);
+
+    const formattedTime = year + '-' + month + '-' + day + '  ' + hours + ":" + minutes + ":" + seconds;
+    return formattedTime;
+}
+
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /* HideEnd */
