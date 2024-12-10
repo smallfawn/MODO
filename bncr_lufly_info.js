@@ -133,7 +133,7 @@ module.exports = async s => {
         for (let i = 0; i < user.length; i++) {
             message += `${i + 1}.${user[i]['username']}${user[i]['pin']}\n`
         }
-        message += '输入序号选择账号查询'
+        message += '输入序号选择账号查询 q退出'
         await s.reply(message)
 
         let select_input = await s.waitInput(async (s) => {
@@ -141,10 +141,10 @@ module.exports = async s => {
             if (num === 'q') return await s.reply('已退出')
             num = Number(num)
             if (!testNumber(num)) {
-                return await s.again('错误,重新输出');  //等价
+                return await s.again('错误,重新输出 q退出');  //等价
             }
             if (num > user.length) {
-                return await s.again('错误,重新输出');
+                return await s.again('错误,重新输出 q退出');
             }
             let select_user = user[num - 1]
             let beanInfo = await getBeanInfo([select_user['pin']])
