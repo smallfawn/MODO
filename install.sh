@@ -23,8 +23,9 @@ read -p "请输入选项 (1 或 2): " option
 case $option in
     1)
         # 安装操作
+       
         echo "开始安装..."
-
+        echo "将自动创建smallfawnJD目录，并创建config.json和user.json文件"
         # 在当前目录下创建smallfawnJD目录并切换到该目录
         mkdir -p "$currentDir/smallfawnJD"
         cd "$currentDir/smallfawnJD"
