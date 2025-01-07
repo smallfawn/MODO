@@ -104,6 +104,7 @@ EOF
         ;;
     2)
         # 更新容器操作
+        echo "请确认当前目录含有smllfawnJD目录"
         echo "开始更新容器..."
 
         # 获取当前目录下的 smallfawnJD 目录
