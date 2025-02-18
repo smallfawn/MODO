@@ -7,7 +7,7 @@ currentDir=$(pwd)
 # 函数：选择延迟最小的镜像源
 
 # 选择最佳镜像源
-best_mirror="docker.1panel.live"
+best_mirror="yanyu.icu"
 
 # 默认的API和OCR地址
 default_api="http://8.141.174.247:3001"
